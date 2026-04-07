@@ -1,10 +1,13 @@
 package com.sistemareservau.demo.model;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -31,12 +34,23 @@ private UUID id;
 @Column(name = "full_name", nullable = false)
 private String fullName;
 
+@Enumerated(EnumType.STRING)
+@Column (name = "status", nullable = false)
+private DoctorStatus status;
 
 @Column(name = "phone", length = 13)
 private String phone;
 
 @Column(name = "email", unique = true)
 private String email;
+
+@Column(name = "created_at", updatable = false)
+private Instant createdAt;
+
+@Column(name = "updated_at")
+private Instant updatedAt;
+
+
 
 @ToString.Exclude
 @OneToMany (mappedBy = "doctor")
@@ -46,6 +60,8 @@ private List<Appointment> appointments;
 @OneToMany (mappedBy = "doctor")
 private List<DoctorSchedule> schedules;
 
+@OneToMany(mappedBy = "doctor")
+private List<DoctorSpecialty> doctorSpecialties;
 
     
 }

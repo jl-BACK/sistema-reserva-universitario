@@ -3,6 +3,7 @@ package com.sistemareservau.demo.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,12 @@ public class Office {
 
     @Column(name = "location", length = 100)
     private String location;
+
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "office")

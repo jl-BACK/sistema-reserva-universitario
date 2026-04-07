@@ -2,6 +2,8 @@ package com.sistemareservau.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +27,12 @@ public class Specialty {
 
     @Column(name = "description", length = 255)
     private String description;
+
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "specialty")

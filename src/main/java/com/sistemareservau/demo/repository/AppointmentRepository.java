@@ -111,4 +111,19 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID>{
             @Param("endDate") LocalDate endDate
     );
 
+    @Query("""
+    SELECT COUNT(a) > 0
+    FROM Appointment a
+    WHERE a.patient = :patient
+    AND a.date = :date
+    AND a.startTime < :endTime
+    AND a.endTime > :startTime
+""")
+boolean existsOverlappingAppointmentByPatient(
+        @Param("patient") Patient patient,
+        @Param("date") LocalDate date,
+        @Param("startTime") LocalTime startTime,
+        @Param("endTime") LocalTime endTime
+);
+
 }

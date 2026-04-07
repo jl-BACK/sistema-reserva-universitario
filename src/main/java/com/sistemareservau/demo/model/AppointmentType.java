@@ -1,5 +1,6 @@
 package com.sistemareservau.demo.model;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,11 +28,17 @@ public class AppointmentType {
     @GeneratedValue
     private UUID id;
 
-    @Column( name = "name", nullable = false)
-    private String name;
+    @Column( name = "type", nullable = false)
+    private String type;
 
     @Column(name = "duration_minutes", nullable = false)
     private Integer durationMinutes;
+
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
     @ToString.Exclude
     @OneToMany 
