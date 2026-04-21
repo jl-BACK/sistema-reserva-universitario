@@ -34,6 +34,7 @@ public class DoctorSchedule {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
+    @Builder.Default
     @Column(name = "active")
     private Boolean active = true;
 
