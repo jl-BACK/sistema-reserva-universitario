@@ -1,5 +1,8 @@
 package com.sistemareservau.demo.dto.request;
 
+import java.util.UUID;
+
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -21,9 +24,18 @@ public class CreateDoctorRequest {
     
     @NotBlank(message = "El nombre es obligatorio")
     @Size(min = 2, max = 50)
-    private String nombre;
+    private String nombreCompleto;
     
+    @NotBlank @Email(message = "El email es obligatorio")
+    @Size(min = 2, max = 50)
+    private String correo;
+
+    @NotBlank(message = "El telefono es obligatorio")
+    @Size(min = 2, max = 50)
+    private String telefono;
+
+
     @NotNull
     @Positive
-    private Long especialidadId; // Referencia por ID
+    private UUID especialidadId; // Referencia por ID
 }

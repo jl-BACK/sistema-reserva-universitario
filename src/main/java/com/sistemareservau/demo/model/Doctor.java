@@ -10,6 +10,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -20,7 +22,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-
 @Entity
 @Table (name = "doctors")
 public class Doctor {
@@ -30,6 +31,9 @@ public class Doctor {
 @GeneratedValue
 @EqualsAndHashCode.Include    
 private UUID id;
+
+@Column(nullable = false, unique = true) 
+    private String licenseNumber;
 
 @Column(name = "full_name", nullable = false)
 private String fullName;
@@ -43,6 +47,7 @@ private String phone;
 
 @Column(name = "email", unique = true)
 private String email;
+
 
 @Column(name = "created_at", updatable = false)
 private Instant createdAt;
@@ -60,8 +65,9 @@ private List<Appointment> appointments;
 @OneToMany (mappedBy = "doctor")
 private List<DoctorSchedule> schedules;
 
-@OneToMany(mappedBy = "doctor")
-private List<DoctorSpecialty> doctorSpecialties;
+@ManyToOne
+@JoinColumn(name = "specialty_id")
+private Specialty specialty;
 
     
 }

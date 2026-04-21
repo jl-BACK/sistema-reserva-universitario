@@ -25,4 +25,6 @@ public class CreateDoctorScheduleRequest {
     
     @NotNull
     private LocalTime horaFin;
+
+    private boolean activo;
 }

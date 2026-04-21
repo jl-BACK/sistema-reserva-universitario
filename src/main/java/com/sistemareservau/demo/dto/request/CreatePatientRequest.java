@@ -19,13 +19,10 @@ public class CreatePatientRequest {
     private String documentoIdentidad;
 
     @NotBlank @Size(min = 2, max = 50)
-    private String nombre;
-
-    @NotBlank @Size(min = 2, max = 50)
-    private String apellido;
+    private String nombreCompleto;
 
     @Email @NotBlank
-    private String correo;
+    private String email;
 
     @NotBlank
     private String telefono;

@@ -14,4 +14,6 @@ public interface AppointmentTypeRepository extends JpaRepository <AppointmentTyp
     List<AppointmentType> findByTypeContainingIgnoreCase(String type);
 
     Optional <AppointmentType> findByType(String type);
+
+    boolean existsByType(String type);
 }

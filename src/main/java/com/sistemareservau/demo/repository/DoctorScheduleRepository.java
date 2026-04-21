@@ -10,6 +10,6 @@ public interface DoctorScheduleRepository extends JpaRepository <DoctorSchedule,
 
     List<DoctorSchedule> findByDayOfWeekAndDoctor(DayOfWeek dayOfWeek, Doctor doctor);
 
-}
+    List<DoctorSchedule> findByDoctorIdAndActiveTrue(UUID doctorId);
 
-//Buscar horarios de un doctor por día de la semana.
+}

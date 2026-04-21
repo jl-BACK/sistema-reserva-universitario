@@ -13,10 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UpdatePatientRequest {
 @Size(min = 2, max = 50)
-    private String nombre;
-
-    @Size(min = 2, max = 50)
-    private String apellido;
+    private String nombreCompleto;
 
     @Email
     private String correo;

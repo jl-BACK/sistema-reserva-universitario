@@ -34,6 +34,12 @@ public class AppointmentType {
     @Column(name = "duration_minutes", nullable = false)
     private Integer durationMinutes;
 
+    @Column(name = "descripcion", nullable = false)
+    private String descripcion;
+
+    @Builder.Default
+    private boolean active = true;
+
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 

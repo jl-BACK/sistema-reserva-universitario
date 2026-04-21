@@ -20,7 +20,13 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID>{
 
     List<Doctor> findByStatus(DoctorStatus status);
 
-List<Doctor> findByFullNameContainingIgnoreCase(String fullName);
+    List<Doctor> findByFullNameContainingIgnoreCase(String fullName);
+
+    // Para validar antes de crear
+    boolean existsByLicenseNumber(String licenseNumber);
+    
+    // Para las búsquedas
+    Optional<Doctor> findByLicenseNumber(String licenseNumber);
 
 // JPQL
 @Query("""

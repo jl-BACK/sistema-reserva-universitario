@@ -1,93 +1,94 @@
 package com.sistemareservau.demo.service;
 
 
+import com.sistemareservau.demo.dto.request.CreateDoctorRequest;
+import com.sistemareservau.demo.dto.request.UpdateDoctorRequest;
+import com.sistemareservau.demo.dto.response.DoctorResponse;
+import com.sistemareservau.demo.exception.ConflictException;
+import com.sistemareservau.demo.exception.ResourceNotFoundException;
 import com.sistemareservau.demo.model.Doctor;
 import com.sistemareservau.demo.model.DoctorStatus;
+import com.sistemareservau.demo.model.Specialty;
 import com.sistemareservau.demo.repository.DoctorRepository;
+import com.sistemareservau.demo.repository.SpecialtyRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final SpecialtyRepository specialtyRepository; 
 
-    // ==================== CREAR DOCTOR ====================
+    // POST /api/doctors
+    public DoctorResponse createDoctor(CreateDoctorRequest request) {
+        // 1. Validar si ya existe por tarjeta profesional o documento
+        if (doctorRepository.existsByLicenseNumber(request.getTarjetaProfesional())) {
+            throw new ConflictException("La tarjeta profesional " + request.getTarjetaProfesional() + " ya está registrada.");
+        
+        }
 
-    public Doctor createDoctor(String fullName, String phone, String email) {
+        Specialty specialty = specialtyRepository.findById(request.getEspecialidadId())
+            .orElseThrow(() -> new ResourceNotFoundException("La especialidad con ID " + request.getEspecialidadId() + " no existe."));
 
-        doctorRepository.findByEmail(email).ifPresent(d -> {
-            throw new RuntimeException("El email ya está registrado");
-        });
-
+        // 2. Mapear Request a Entidad
         Doctor doctor = Doctor.builder()
-                .fullName(fullName)
-                .phone(phone)
-                .email(email)
+                .fullName(request.getNombreCompleto())
+                .licenseNumber(request.getTarjetaProfesional())
+                .email(request.getCorreo())
+                .phone(request.getTelefono())
+                .specialty(specialty) 
                 .status(DoctorStatus.ACTIVE)
-                .createdAt(Instant.now())
                 .build();
 
-        return doctorRepository.save(doctor);
+        return mapToResponse(doctorRepository.save(doctor));
     }
 
-    // ==================== ACTIVAR DOCTOR ====================
-
-    public void activateDoctor(UUID id) {
-
-        Doctor doctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
-
-        if (doctor.getStatus() == DoctorStatus.ACTIVE) {
-            throw new RuntimeException("El doctor ya está activo");
-        }
-
-        doctor.setStatus(DoctorStatus.ACTIVE);
-        doctor.setUpdatedAt(Instant.now());
-
-        doctorRepository.save(doctor);
-    }
-
-    // ==================== DESACTIVAR DOCTOR ====================
-
-    public void deactivateDoctor(UUID id) {
-
-        Doctor doctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
-
-        if (doctor.getStatus() == DoctorStatus.INACTIVE) {
-            throw new RuntimeException("El doctor ya está inactivo");
-        }
-
-        doctor.setStatus(DoctorStatus.INACTIVE);
-        doctor.setUpdatedAt(Instant.now());
-
-        doctorRepository.save(doctor);
-    }
-
-    // ==================== BUSCAR POR ID ====================
-
-    public Doctor getDoctorById(UUID id) {
+    // GET /api/doctors/{id}
+    public DoctorResponse getDoctorById(UUID id) {
         return doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor no encontrado"));
+                .map(this::mapToResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Médico no encontrado con ID: " + id));
     }
 
-    // ==================== LISTAR DOCTORES ACTIVOS ====================
-
-    public List<Doctor> getActiveDoctors() {
-        return doctorRepository.findByStatus(DoctorStatus.ACTIVE);
+    // GET /api/doctors
+    public List<DoctorResponse> getAllDoctors() {
+        return doctorRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
+    // PUT /api/doctors/{id}
+    public DoctorResponse updateDoctor(UUID id, UpdateDoctorRequest request) {
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se puede actualizar: Médico no encontrado"));
 
-    // ==================== BUSCAR POR ESPECIALIDAD ====================
+        // Actualizamos campos permitidos
+        doctor.setStatus(request.getStatus());
+       
+        Specialty newSpecialty = specialtyRepository.findById(request.getEspecialidadId())
+           .orElseThrow(() -> new ResourceNotFoundException("Especialidad no válida"));
+        doctor.setSpecialty(newSpecialty);
 
-    public List<Doctor> getDoctorsBySpecialty(UUID specialtyId) {
-        return doctorRepository.findActiveDoctorsBySpecialty(specialtyId);
+        return mapToResponse(doctorRepository.save(doctor));
     }
 
+    // Mapper Privado
+    private DoctorResponse mapToResponse(Doctor doctor) {
+        return DoctorResponse.builder()
+                .id(doctor.getId())
+                .nombreCompleto(doctor.getFullName())
+                .tarjetaProfesional(doctor.getLicenseNumber())
+                .nombreEspecialidad(doctor.getSpecialty().getName()) // Asumiendo que tiene especialidad
+                .status(doctor.getStatus())
+                .build();
+    }
 }

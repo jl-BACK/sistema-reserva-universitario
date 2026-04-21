@@ -1,5 +1,7 @@
 package com.sistemareservau.demo.dto.request;
 
+import com.sistemareservau.demo.model.OfficeStatus;
+
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,5 +19,5 @@ public class UpdateOfficeRequest {
     @Size(max = 255)
     private String ubicacion;
     
-    private Boolean disponible; // Para inhabilitar un consultorio por mantenimiento
+    private OfficeStatus status; // Para inhabilitar un consultorio por mantenimiento
 }
